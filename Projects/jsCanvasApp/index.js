@@ -94,6 +94,12 @@ const cellStep = (row, column) => {
     } else if (direction === 'right') {
       verticals[row][column] = true;
     }
+
+    if(direction === 'up') {
+      horizontals[row-1][column] = true;
+    } else if (direction === 'down') {
+      horizontals[row][column] = true;
+    }
   }
   //Visit that next cell
 
