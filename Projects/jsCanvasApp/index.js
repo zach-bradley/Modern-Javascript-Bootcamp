@@ -1,61 +1,60 @@
+const start = (ceHo, ceVe) =>{  
+  const { Engine, Render, Runner, World, Bodies, Body, Events} = Matter;
 
-const { Engine, Render, Runner, World, Bodies, Body, Events} = Matter;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
 
-const width = window.innerWidth;
-const height = window.innerHeight;
+  const cellsHorizontal = ceHo;
+  const cellsVertical = ceVe;
 
-const cellsHorizontal = 10;
-const cellsVertical = 6;
+  const unitLengthX = width / cellsHorizontal;
+  const unitLengthY = height / cellsVertical;
 
-const unitLengthX = width / cellsHorizontal;
-const unitLengthY = height / cellsVertical;
+  const engine = Engine.create();
+  engine.world.gravity.y = 0;
 
-const engine = Engine.create();
-engine.world.gravity.y = 0;
+  const { world } = engine;
+  const render = Render.create({
+    element: document.body,
+    engine: engine,
+    options: {
+      wireframes: false,
+      width,
+      height
+    }
+  });
 
-const { world } = engine;
-const render = Render.create({
-  element: document.body,
-  engine: engine,
-  options: {
-    wireframes: false,
-    width,
-    height
-  }
-});
+  Render.run(render);
+  Runner.run(Runner.create(), engine);
 
-Render.run(render);
-Runner.run(Runner.create(), engine);
+  const walls = [
+    //Walls adjust based on width and height
+    Bodies.rectangle(width / 2, 0, width, 5, {isStatic: true}),
+    Bodies.rectangle(width / 2, height, width, 5, {isStatic: true}),
+    Bodies.rectangle(0, height / 2, 5, height, {isStatic: true}),
+    Bodies.rectangle(width, height / 2, 5, height, {isStatic: true}),
+  ];
 
-const walls = [
-  //Walls adjust based on width and height
-  Bodies.rectangle(width / 2, 0, width, 5, {isStatic: true}),
-  Bodies.rectangle(width / 2, height, width, 5, {isStatic: true}),
-  Bodies.rectangle(0, height / 2, 5, height, {isStatic: true}),
-  Bodies.rectangle(width, height / 2, 5, height, {isStatic: true}),
-];
+  World.add(world, walls);
 
-World.add(world, walls);
+  //Maze generation
+  const shuffle = (arr) => {
+    let counter = arr.length;
 
-//Maze generation
-const shuffle = (arr) => {
-  let counter = arr.length;
+    while (counter > 0) {
+      const index = Math.floor(Math.random() * counter);
 
-  while (counter > 0) {
-    const index = Math.floor(Math.random() * counter);
+      counter--;
 
-    counter--;
+      const temp = arr[counter];
+      arr[counter] = arr[index];
+      arr[index] = temp;
+    }
 
-    const temp = arr[counter];
-    arr[counter] = arr[index];
-    arr[index] = temp;
-  }
+    return arr;
+  };
 
-  return arr;
-};
-
-//Same as for loop in for loop
-const start = () =>{  
+  //Same as for loop in for loop
   const grid = Array(cellsVertical).fill(null).map(() => Array(cellsHorizontal).fill(false));
 
   const verticals = Array(cellsVertical).fill(null).map(() => Array(cellsHorizontal -1).fill(false));
@@ -209,31 +208,31 @@ const start = () =>{
     Body.setVelocity(ball, { x: x - 5, y });
   }
 });
+  //Win Condition
+
+  Events.on(engine, 'collisionStart', event => {
+    event.pairs.forEach((collision) => {
+      const labels = ['ball', 'goal']
+
+      if(
+        labels.includes(collision.bodyA.label) &&
+        labels.includes(collision.bodyB.label)
+        ) {
+          document.querySelector('.winner').classList.remove('hidden');
+          document.querySelector('h1').classList.add('dance');
+          world.gravity.y = 1;
+          world.bodies.forEach(body => {
+            if (body.label === 'wall') {
+              Body.setStatic(body, false);
+            }
+          })
+        }
+    });
+  });
 };
 
 
 
-//Win Condition
 
-Events.on(engine, 'collisionStart', event => {
-  event.pairs.forEach((collision) => {
-    const labels = ['ball', 'goal']
 
-    if(
-      labels.includes(collision.bodyA.label) &&
-      labels.includes(collision.bodyB.label)
-      ) {
-        document.querySelector('.winner').classList.remove('hidden');
-        document.querySelector('h1').classList.add('dance');
-        world.gravity.y = 1;
-        world.bodies.forEach(body => {
-          if (body.label === 'wall') {
-            Body.setStatic(body, false);
-          }
-        })
-      }
-  });
-});
-
-start();
 
