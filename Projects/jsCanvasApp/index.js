@@ -1,4 +1,4 @@
-const { Engine, Render, Runner, World, Bodies, Body} = Matter;
+const { Engine, Render, Runner, World, Bodies, Body, Events} = Matter;
 
 const width = 600;
 const height = 600;
@@ -125,7 +125,8 @@ horizontals.forEach((row, rowIndex) => {
       unitLength,
       5,
       {
-        isStatic: true
+        isStatic: true,
+        label: 'wall'
       }
     );
     World.add(world, wall);
@@ -144,7 +145,8 @@ verticals.forEach((row, rowIndex) => {
       5,
       unitLength,
       {
-        isStatic: true
+        isStatic: true,
+        label: 'wall'
       }
     );
     World.add(world, wall);
@@ -160,7 +162,10 @@ const goal = Bodies.rectangle(
   unitLength / 2,
   {
     isStatic: true,
-    fill: 'green'
+    render: {
+      fillStyle: 'green'
+    },
+    label: 'goal'
   }
 );
 
@@ -172,7 +177,9 @@ const ball = Bodies.circle(
   unitLength / 2,
   unitLength / 2,
   unitLength / 4,
-
+  {
+    label: 'ball'
+  }
 );
 
 World.add(world, ball);
@@ -191,4 +198,24 @@ document.addEventListener('keydown', event => {
   if (event.keyCode === 65) {
     Body.setVelocity(ball, { x: x - 5, y });
   }
+});
+
+//Win Condition
+
+Events.on(engine, 'collisionStart', event => {
+  event.pairs.forEach((collision) => {
+    const labels = ['ball', 'goal']
+
+    if(
+      labels.includes(collision.bodyA.label) &&
+      labels.includes(collision.bodyB.label)
+      ) {
+        world.gravity.y = 1;
+        world.bodies.forEach(body => {
+          if (body.label === 'wall') {
+            Body.setStatic(body, false);
+          }
+        })
+      }
+  });
 });
