@@ -3,8 +3,9 @@ const { Engine, Render, Runner, World, Bodies} = Matter;
 const width = 600;
 const height = 600;
 
-const row = 3;
-const column = 3;
+const cells= 3;
+
+const unitLength = width / cells;
 
 const engine = Engine.create();
 const { world } = engine;
@@ -49,17 +50,17 @@ const shuffle = (arr) => {
 };
 
 //Same as for loop in for loop
-const grid = Array(row).fill(null).map(() => Array(column).fill(false));
+const grid = Array(cells).fill(null).map(() => Array(cells).fill(false));
 
-const verticals = Array(column).fill(null).map(() => Array(row-1).fill(false));
-const horizontals = Array(column-1).fill(null).map(() => Array(row).fill(false));
+const verticals = Array(cells).fill(null).map(() => Array(cells-1).fill(false));
+const horizontals = Array(cells-1).fill(null).map(() => Array(cells).fill(false));
 
-const startRow = Math.floor(Math.random() * row);
-const startColumn = Math.floor(Math.random() * column);
+const startRow = Math.floor(Math.random() * cells);
+const startColumn = Math.floor(Math.random() * cells);
 
 const cellStep = (row, column) => {
   //If I have visited the call at [row, column], then return
-  if (grid[row][column] === true) {
+  if (grid[row][column]) {
     return;
   }
 
@@ -79,7 +80,12 @@ const cellStep = (row, column) => {
     const [nextRow, nextColumn, direction] = neighbor;
 
     //See if that neighbor is out of bounds
-    if (nextRow < 0 || nextRow >= row || nextColumn < 0 || nextColumn >= column) {
+    if (
+      nextRow < 0 || 
+      nextRow >= cells || 
+      nextColumn < 0 || 
+      nextColumn >= cells
+     ) {
       continue;
     }
     
@@ -87,23 +93,40 @@ const cellStep = (row, column) => {
     if (grid[nextRow][nextColumn]) {
       continue;
     }
-  
+  ``
     //Remove wall from horizontals or verticals
     if (direction === 'left') {
       verticals[row][column-1] = true;
     } else if (direction === 'right') {
       verticals[row][column] = true;
-    }
-
-    if(direction === 'up') {
+    } else if(direction === 'up') {
       horizontals[row-1][column] = true;
     } else if (direction === 'down') {
       horizontals[row][column] = true;
     }
+    //Visit that next cell
+    cellStep(nextRow, nextColumn);
   }
-  //Visit that next cell
-
 };
 
 cellStep(startRow, startColumn);
+
+horizontals.forEach((row, rowIndex) => {
+  row.forEach((open, columnIndex) => {
+    if (open) {
+      return;
+    }
+
+    const wall = Bodies.rectangle(
+      columnIndex * unitLength + unitLength / 2,
+      rowIndex * unitLength + unitLength,
+      unitLength,
+      10,
+      {
+        isStatic: true
+      }
+    );
+    World.add(world, wall);
+  });
+});
 
