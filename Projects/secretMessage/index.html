@@ -7,15 +7,31 @@
   <title>Secret Message</title>
 </head>
   <style>
-    .row {
-      margin-top: 25vh;
+    body {
+      background-color: gray;
     }
     h1 {
       margin-top: 0;
     }
+    .fa-user-secret {
+      font-size: 40px;
+      color: black;
+      margin-right: 10px;
+    }
+    label {
+      font-size: 15px;
+    }
+    .fa-broadcast-tower {
+      font-size: 40px;
+      color: black;
+      margin-right: 10px;
+    }
+    button .two { display: none; }
+    button:hover .one { display: none; }
+    button:hover .two { display: inline; }
   </style>
 <body>
-  <div class="row">
+  <div class="row" style="margin-top: 25vh;">
     <div class="col s8 offset-s2">
       <div id="message-show" class="card-panel hide">
         <h1></h1>
@@ -26,15 +42,18 @@
 
       <div id="message-form" class="card-panel">
         <form>
-          <label>Enter a Secret Message</label>
+          <label><i class="fas fa-user-secret"></i>  Enter a Secret Message </i></label>
           <input id='message-input' />
-          <button class="btn">Create</button>
+          <button class="btn">
+            <span class="one">Create?</span>
+            <span class="two">I also like to live dangerously</span>
+          </button>
         </form>
       </div>
 
       <div id="link-form" class="card-panel hide">
         <div>
-          Share this link with a friend:
+            <i class="fas fa-broadcast-tower"></i> Share this link with a friend:
           <div class="row">
             <input id='link-input' class="col s10">
             <button class="btn col s2" onclick="copy()"><i class="fas fa-copy"></i></button>
