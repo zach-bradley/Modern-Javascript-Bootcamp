@@ -3,7 +3,7 @@ const { Engine, Render, Runner, World, Bodies} = Matter;
 const width = 600;
 const height = 600;
 
-const cells= 5;
+const cells= 8;
 
 const unitLength = width / cells;
 
@@ -24,10 +24,10 @@ Runner.run(Runner.create(), engine);
 
 const walls = [
   //Walls adjust based on width and height
-  Bodies.rectangle(width / 2, 0, width, 20, {isStatic: true}),
-  Bodies.rectangle(width / 2, height, width, 20, {isStatic: true}),
-  Bodies.rectangle(0, height / 2, 20, height, {isStatic: true}),
-  Bodies.rectangle(width, height / 2, 20, height, {isStatic: true}),
+  Bodies.rectangle(width / 2, 0, width, 5, {isStatic: true}),
+  Bodies.rectangle(width / 2, height, width, 5, {isStatic: true}),
+  Bodies.rectangle(0, height / 2, 5, height, {isStatic: true}),
+  Bodies.rectangle(width, height / 2, 5, height, {isStatic: true}),
 ];
 
 World.add(world, walls);
@@ -149,3 +149,30 @@ verticals.forEach((row, rowIndex) => {
   });
 });
 
+//Goal
+
+const goal = Bodies.rectangle(
+  width - unitLength / 2,
+  height - unitLength / 2,
+  unitLength / 2,
+  unitLength / 2,
+  {
+    isStatic: true,
+    fill: 'green'
+  }
+);
+
+World.add(world, goal);
+
+//Ball
+
+const ball = Bodies.circle(
+  unitLength / 2,
+  unitLength / 2,
+  unitLength / 4,
+  {
+    isStatic: true
+  }
+);
+
+World.add(world, ball);
