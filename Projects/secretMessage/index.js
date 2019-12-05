@@ -30,3 +30,8 @@ const copy = () => {
   document.execCommand("copy");
   alert("Copied text!");
 }
+
+const play = () => {
+  var audio = document.querySelector('#audio');
+  audio.play();
+}
