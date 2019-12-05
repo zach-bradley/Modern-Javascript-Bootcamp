@@ -1,10 +1,11 @@
+
 const { Engine, Render, Runner, World, Bodies, Body, Events} = Matter;
 
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const cellsHorizontal = 4;
-const cellsVertical = 3;
+const cellsHorizontal = 10;
+const cellsVertical = 6;
 
 const unitLengthX = width / cellsHorizontal;
 const unitLengthY = height / cellsVertical;
@@ -54,139 +55,146 @@ const shuffle = (arr) => {
 };
 
 //Same as for loop in for loop
-const grid = Array(cells).fill(null).map(() => Array(cells).fill(false));
+const start = () =>{  
+  const grid = Array(cellsVertical).fill(null).map(() => Array(cellsHorizontal).fill(false));
 
-const verticals = Array(cells).fill(null).map(() => Array(cells-1).fill(false));
-const horizontals = Array(cells-1).fill(null).map(() => Array(cells).fill(false));
+  const verticals = Array(cellsVertical).fill(null).map(() => Array(cellsHorizontal -1).fill(false));
+  const horizontals = Array(cellsVertical -1).fill(null).map(() => Array(cellsHorizontal).fill(false));
 
-const startRow = Math.floor(Math.random() * cells);
-const startColumn = Math.floor(Math.random() * cells);
+  const startRow = Math.floor(Math.random() * cellsVertical);
+  const startColumn = Math.floor(Math.random() * cellsHorizontal);
 
-const cellStep = (row, column) => {
-  //If I have visited the call at [row, column], then return
-  if (grid[row][column]) {
-    return;
-  }
-
-  //Mark cell as visited
-  grid[row][column] = true;
-
-  //Assemble randomly-ordered list of neighbors
-  const neighbors = shuffle([
-    [row-1, column, 'up'],
-    [row, column + 1, 'right'],
-    [row + 1, column, 'down'],
-    [row, column - 1, 'left']
-  ]);
-
-  //For each neighbor...
-  for (let neighbor of neighbors) { 
-    const [nextRow, nextColumn, direction] = neighbor;
-
-    //See if that neighbor is out of bounds
-    if (
-      nextRow < 0 || 
-      nextRow >= cells || 
-      nextColumn < 0 || 
-      nextColumn >= cells
-     ) {
-      continue;
-    }
-    
-    //If we have visited that neighbor, continue to next neighbor
-    if (grid[nextRow][nextColumn]) {
-      continue;
-    }
-
-    //Remove wall from horizontals or verticals
-    if (direction === 'left') {
-      verticals[row][column-1] = true;
-    } else if (direction === 'right') {
-      verticals[row][column] = true;
-    } else if(direction === 'up') {
-      horizontals[row-1][column] = true;
-    } else if (direction === 'down') {
-      horizontals[row][column] = true;
-    }
-    //Visit that next cell
-    cellStep(nextRow, nextColumn);
-  }
-};
-
-cellStep(startRow, startColumn);
-
-horizontals.forEach((row, rowIndex) => {
-  row.forEach((open, columnIndex) => {
-    if (open) {
+  const cellStep = (row, column) => {
+    //If I have visited the call at [row, column], then return
+    if (grid[row][column]) {
       return;
     }
 
-    const wall = Bodies.rectangle(
-      columnIndex * unitLength + unitLength / 2,
-      rowIndex * unitLength + unitLength,
-      unitLength,
-      5,
-      {
-        isStatic: true,
-        label: 'wall'
-      }
-    );
-    World.add(world, wall);
-  });
-});
+    //Mark cell as visited
+    grid[row][column] = true;
 
-verticals.forEach((row, rowIndex) => {
-  row.forEach((open, columnIndex) => {
-    if (open) {
-      return;
+    //Assemble randomly-ordered list of neighbors
+    const neighbors = shuffle([
+      [row-1, column, 'up'],
+      [row, column + 1, 'right'],
+      [row + 1, column, 'down'],
+      [row, column - 1, 'left']
+    ]);
+
+    //For each neighbor...
+    for (let neighbor of neighbors) { 
+      const [nextRow, nextColumn, direction] = neighbor;
+
+      //See if that neighbor is out of bounds
+      if (
+        nextRow < 0 || 
+        nextRow >= cellsVertical || 
+        nextColumn < 0 || 
+        nextColumn >= cellsHorizontal
+      ) {
+        continue;
+      }
+      
+      //If we have visited that neighbor, continue to next neighbor
+      if (grid[nextRow][nextColumn]) {
+        continue;
+      }
+
+      //Remove wall from horizontals or verticals
+      if (direction === 'left') {
+        verticals[row][column-1] = true;
+      } else if (direction === 'right') {
+        verticals[row][column] = true;
+      } else if(direction === 'up') {
+        horizontals[row-1][column] = true;
+      } else if (direction === 'down') {
+        horizontals[row][column] = true;
+      }
+      //Visit that next cell
+      cellStep(nextRow, nextColumn);
     }
+  };
 
-    const wall = Bodies.rectangle(
-      columnIndex * unitLength + unitLength,
-      rowIndex * unitLength + unitLength / 2,
-      5,
-      unitLength,
-      {
-        isStatic: true,
-        label: 'wall'
+  cellStep(startRow, startColumn);
+
+  horizontals.forEach((row, rowIndex) => {
+    row.forEach((open, columnIndex) => {
+      if (open) {
+        return;
       }
-    );
-    World.add(world, wall);
+
+      const wall = Bodies.rectangle(
+        columnIndex * unitLengthX + unitLengthX / 2,
+        rowIndex * unitLengthY + unitLengthY,
+        unitLengthX,
+        5,
+        {
+          isStatic: true,
+          label: 'wall',
+          render: {
+            fillStyle: 'yellow'
+          }
+        }
+      );
+      World.add(world, wall);
+    });
   });
-});
 
-//Goal
+  verticals.forEach((row, rowIndex) => {
+    row.forEach((open, columnIndex) => {
+      if (open) {
+        return;
+      }
 
-const goal = Bodies.rectangle(
-  width - unitLength / 2,
-  height - unitLength / 2,
-  unitLength / 2,
-  unitLength / 2,
-  {
-    isStatic: true,
-    render: {
-      fillStyle: 'green'
-    },
-    label: 'goal'
-  }
-);
+      const wall = Bodies.rectangle(
+        columnIndex * unitLengthX + unitLengthX,
+        rowIndex * unitLengthY + unitLengthY / 2,
+        5,
+        unitLengthY,
+        {
+          isStatic: true,
+          label: 'wall',
+          render: {
+            fillStyle: 'yellow'
+          }
+        }
+      );
+      World.add(world, wall);
+    });
+  });
 
-World.add(world, goal);
+  //Goal
+  const goalSize = Math.min(unitLengthX, unitLengthY) / 2;
+  const goal = Bodies.rectangle(
+    width - unitLengthX / 2,
+    height - unitLengthY / 2,
+    goalSize,
+    goalSize,
+    {
+      isStatic: true,
+      render: {
+        fillStyle: 'green'
+      },
+      label: 'goal'
+    }
+  );
 
-//Ball
+  World.add(world, goal);
 
-const ball = Bodies.circle(
-  unitLength / 2,
-  unitLength / 2,
-  unitLength / 4,
-  {
-    label: 'ball'
-  }
-);
+  //Ball
 
-World.add(world, ball);
+  const ballRadius = Math.min(unitLengthX, unitLengthY) / 2;
+  const ball = Bodies.circle(
+    unitLengthX / 2,
+    unitLengthY / 2,
+    ballRadius / 2,
+    {
+      label: 'ball'
+    }
+  );
 
-document.addEventListener('keydown', event => {
+  World.add(world, ball);
+  document.addEventListener('keydown', event => {
   const {x, y} = ball.velocity;
   if (event.keyCode === 87) {
     Body.setVelocity(ball, { x, y: y-5 });
@@ -201,6 +209,9 @@ document.addEventListener('keydown', event => {
     Body.setVelocity(ball, { x: x - 5, y });
   }
 });
+};
+
+
 
 //Win Condition
 
@@ -212,6 +223,8 @@ Events.on(engine, 'collisionStart', event => {
       labels.includes(collision.bodyA.label) &&
       labels.includes(collision.bodyB.label)
       ) {
+        document.querySelector('.winner').classList.remove('hidden');
+        document.querySelector('h1').classList.add('dance');
         world.gravity.y = 1;
         world.bodies.forEach(body => {
           if (body.label === 'wall') {
@@ -221,3 +234,6 @@ Events.on(engine, 'collisionStart', event => {
       }
   });
 });
+
+start();
+
