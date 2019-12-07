@@ -1,5 +1,5 @@
 {
-  "name": "projectRunner",
+  "name": "projectrunner",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,5 +11,10 @@
   "license": "ISC",
   "bin": {
     "watchit": "index.js"
+  },
+  "dependencies": {
+    "caporal": "^1.3.0",
+    "chokidar": "^3.3.0",
+    "lodash.debounce": "^4.0.8"
   }
 }
