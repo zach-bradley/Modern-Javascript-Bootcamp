@@ -28,7 +28,9 @@ class UsersRepository {
     const records = await this.getAll();
     records.push(attrs);
 
-    await this.writeAll(records)
+    await this.writeAll(records);
+
+    return attrs;
   }
 
   async writeAll(records) {
@@ -83,13 +85,6 @@ class UsersRepository {
   }
 }
 
-const test = async () => {
-  const repo = new UsersRepository('user.json');
 
-  const user = await repo.getOneBy({email: "test@#test.com", password: "mypassword"});
-
-  console.log(user);
-
-}
-
-test();
+//exports instance of class, can only work when you have 1 instance of usersRepository
+module.exports = new UsersRepository('users.json');
