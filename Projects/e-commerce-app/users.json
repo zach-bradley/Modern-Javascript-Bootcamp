@@ -21,5 +21,15 @@
     "email": "test4@test.com",
     "password": "b204cc99b8045316bc76dd0948977304920c7f7a20cd1878381b4ab2366b4eac2527e389da990f0d9e4b6384a70eab41b32afa168e0b834ff6165f0d6f61e49c.c0ffef35ff981e9e",
     "id": "20d2cd3b"
+  },
+  {
+    "email": "test4@test.com",
+    "password": "b819231d0821afc189d457f45044d1a4bcbf2cfacb3af9277bd1d272d378ac218067f4e60f7907d92e532db65a4c89f865a6dee83dc5f7f1c66572f9407212dc.a3a46a4db887cb71",
+    "id": "f4e59e56"
+  },
+  {
+    "email": "testie@test.com",
+    "password": "5ec22000d90df276bb19600b371cbaeb2d98d1b365b1da2f1f526c2d1af4095048788cffad78e157365e0e42381f4e47b9371516b717f1b770c2c630f7570d5b.bb77810d188f154b",
+    "id": "408a4777"
   }
 ]
