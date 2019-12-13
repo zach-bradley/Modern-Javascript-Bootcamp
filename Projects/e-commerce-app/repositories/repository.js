@@ -21,12 +21,11 @@ module.exports = class Repository {
       })
     );
   }
-
   async create(attrs) {
     attrs.id = this.randomId();
 
-    const records =- await this.getAll();
-    records.push(attr);
+    const records = await this.getAll();
+    records.push(attrs);
     await this.writeAll(records);
 
     return attrs;
